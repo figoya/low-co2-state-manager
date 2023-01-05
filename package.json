@@ -1,0 +1,45 @@
+{
+  "name": "low-carbon-state-manager",
+  "version": "0.1.0",
+  "description": "A low-carbon, event-driven, state-manager for front-end applications that use web components",
+  "main": "index.js",
+  "private": false,
+  "type": "module",
+  "files": ["index.js"],
+  "scripts": {
+    "test": "mocha",
+    "lint": "eslint --cache --ext .js"
+  },
+  "mocha": {
+    "require": "jsdom-global/register.js, mock-local-storage"
+  },
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "chai-dom": "^1.11.0",
+    "eslint": "^8.31.0",
+    "jsdom": "^20.0.3",
+    "jsdom-global": "^3.0.2",
+    "mocha": "^10.1.0",
+    "mock-local-storage": "^1.1.23"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/figoya/low-carbon-state-manager.git"
+  },
+  "keywords": [
+    "low-carbon",
+    "low carbon",
+    "figoya",
+    "state",
+    "manager",
+    "management",
+    "web components",
+    "event driven"
+  ],
+  "author": "Nat Darke <nat@figoya.com> (https://www.figoya.com)",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/figoya/low-carbon-state-manager/issues"
+  },
+  "homepage": "https://github.com/figoya/low-carbon-state-manager#readme"
+}
