@@ -13,7 +13,7 @@ import {
   setStateModifiers,
   resetAllState,
   scopeName
-} from "./index.js";
+} from "./src/index.js";
 
 chai.use(chaiDom);
 

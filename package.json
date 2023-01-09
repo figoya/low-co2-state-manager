@@ -1,24 +1,48 @@
 {
   "name": "low-carbon-state-manager",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "A low-carbon, event-driven, state-manager for front-end applications that use web components",
-  "main": "index.js",
+  "main": "dist/index.js",
   "private": false,
   "type": "module",
-  "files": ["index.js"],
+  "files": [
+    "dist/index.js"
+  ],
   "scripts": {
     "test": "mocha",
-    "lint": "eslint --cache --ext .js"
+    "lint": "eslint --cache --ext .js",
+    "build": "./node_modules/.bin/babel src --out-dir dist"
   },
   "mocha": {
     "require": "jsdom-global/register.js, mock-local-storage"
   },
+  "babel": {
+    "sourceMaps": true,
+    "sourceType": "module",
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "useBuiltIns": "entry",
+          "corejs": "3.22"
+        }
+      ],
+      [
+        "minify"
+      ]
+    ]
+  },
   "devDependencies": {
+    "@babel/cli": "^7.20.7",
+    "@babel/core": "^7.20.12",
+    "@babel/preset-env": "^7.20.2",
+    "babel-preset-minify": "^0.5.2",
     "chai": "^4.3.7",
     "chai-dom": "^1.11.0",
     "eslint": "^8.31.0",
     "jsdom": "^20.0.3",
     "jsdom-global": "^3.0.2",
+    "minify": "^9.1.0",
     "mocha": "^10.1.0",
     "mock-local-storage": "^1.1.23"
   },
