@@ -3,9 +3,11 @@ let stateModifiers = [];
 
 const handler = createHandler(
   "DOM_CONTENT_LOADED",
-  function action(customEvent, domEvent) {}
+  function action(customEvent, domEvent) {
+    console.info(customEvent, domEvent);
+  }
 );
-window.addEventListener("DOM_CONTENT_LOADED", handler);
+window.addEventListener("GLOBAL_DOM_CONTENT_LOADED", handler);
 
 addEventListener("DOMContentLoaded", (event) => {
   publish("DOM_CONTENT_LOADED", event);

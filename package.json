@@ -1,24 +1,25 @@
 {
   "name": "low-carbon-state-manager",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A low-carbon, event-driven, state-manager for front-end applications that use web components",
   "main": "dist/index.js",
   "private": false,
   "type": "module",
   "files": [
-    "dist/index.js"
+    "dist/index.js",
+    "dist/index.min.js"
   ],
   "scripts": {
     "test": "mocha",
-    "lint": "eslint --cache --ext .js",
-    "build": "./node_modules/.bin/babel src --out-dir dist"
+    "lint": "eslint --cache --ext .js src/",
+    "build": "cp src/index.js dist/index.js && minify src/index.js > dist/index.min.js",
+    "babel-build": "./node_modules/.bin/babel src --out-dir dist"
   },
   "mocha": {
     "require": "jsdom-global/register.js, mock-local-storage"
   },
   "babel": {
-    "sourceMaps": true,
-    "sourceType": "module",
+    "sourceMaps": false,
     "presets": [
       [
         "@babel/preset-env",
@@ -32,6 +33,22 @@
       ]
     ]
   },
+  "eslintConfig": {
+      "env": {
+          "browser": true,
+          "es2021": true
+      },
+      "extends": "eslint:recommended",
+      "overrides": [
+      ],
+      "parserOptions": {
+          "ecmaVersion": "latest",
+          "sourceType": "module"
+      },
+      "ignorePatterns": ["test.js"],
+      "rules": {
+      }
+  },
   "devDependencies": {
     "@babel/cli": "^7.20.7",
     "@babel/core": "^7.20.12",
@@ -39,6 +56,7 @@
     "babel-preset-minify": "^0.5.2",
     "chai": "^4.3.7",
     "chai-dom": "^1.11.0",
+    "core-js": "^3.27.1",
     "eslint": "^8.31.0",
     "jsdom": "^20.0.3",
     "jsdom-global": "^3.0.2",
