@@ -20,7 +20,7 @@ function subscribe(subscription) {
         subscription.event,
         subscription.scope
       );
-      const handler = createHandler(scopedCustomEventName, subscription.action);
+      const handler = createHandler(scopedCustomEventName, subscription.action, subscription.scope);
       window.addEventListener(scopedCustomEventName, handler);
       addSubscription({
         name: subscription.name || null,
@@ -36,7 +36,8 @@ function subscribe(subscription) {
         );
         const handler = createHandler(
           scopedCustomEventName,
-          subscription.action
+          subscription.action,
+          subscription.scope
         );
         window.addEventListener(scopedCustomEventName, handler);
         addSubscription({
@@ -146,9 +147,22 @@ function getState(scope = "global") {
   }
 }
 
+function getAllState() {
+  try {
+    if (!window.sessionStorage.getItem("lcsm")) {
+      window.sessionStorage.setItem("lcsm", JSON.stringify({}));
+    }
+    return JSON.parse(window.sessionStorage.getItem("lcsm"));
+  } catch (error) {
+    console.error(`
+      window.sessionStorage.state must be valid JSON.
+      ${error}
+    `);
+  }}
+
 function setState(value, scope = "global") {
   const newState = {
-    ...getState(),
+    ...getAllState(),
     [scope]: value,
   };
   window.sessionStorage.setItem("lcsm", JSON.stringify(newState));
@@ -162,7 +176,9 @@ function amendState(customEventName, data = null, scope = "global") {
   const currentState = getState(scope);
   let newState = currentState;
   getStateModifiers().forEach((modifier) => {
-    newState = modifier(customEventName, newState, scope, data);
+    if(scope === modifier.scope){
+      newState = modifier.xxx(customEventName, newState, scope, data);
+    }
   });
   setState(newState, scope);
 }
@@ -175,9 +191,14 @@ function setStateModifiers(value) {
   stateModifiers = value;
 }
 
-function addStateModifier(newModifier) {
+function addStateModifier(newModifier, scope = "global") {
   let modifiers = [...getStateModifiers()];
-  modifiers.push(newModifier);
+  modifiers.push(
+    { 
+      xxx: newModifier,
+      scope 
+    }
+  );
   setStateModifiers(modifiers);
 }
 
