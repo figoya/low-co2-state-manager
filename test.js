@@ -12,7 +12,6 @@ import {
   getStateModifiers,
   setStateModifiers,
   resetAllState,
-  scopeName,
 } from "./src/index.js";
 
 chai.use(chaiDom);
@@ -37,8 +36,8 @@ const mockState = {
 };
 
 const mockModifier1 = (customEventName, currentState, scope, data) => {
-  switch (scopeName(customEventName, scope)) {
-    case scopeName("CUSTOM_EVENT_NAME", scope):
+  switch (customEventName) {
+    case "CUSTOM_EVENT_NAME":
       return {
         ...currentState,
         kString: data.kString,
@@ -61,8 +60,8 @@ const mockModifier1 = (customEventName, currentState, scope, data) => {
 };
 
 const mockModifier2 = (customEventName, currentState, scope, data) => {
-  switch (scopeName(customEventName, scope)) {
-    case scopeName("CUSTOM_EVENT_NAME", scope):
+  switch (customEventName) {
+    case "CUSTOM_EVENT_NAME":
       return {
         ...currentState,
         kString: `${data.kString} 2`,
@@ -96,15 +95,7 @@ describe("setState() and getState()", () => {
       setState({});
       expect(getState()).to.be.empty;
     });
-    it(`should be true when setState(
-          { k: { 
-              k1: "v1",
-              k2: 1,
-              k3: null,
-              k4: undefined
-            }
-          }
-        );`, () => {
+    it(`should be true when setState({ k: { k1: "v1", k2: 1, k3: null, k4: undefined } });`, () => {
       setState({
         k: {
           k1: "v1",
@@ -177,8 +168,8 @@ describe("amendState()", () => {
       setState(mockState, "customScope1");
       addStateModifier(mockModifier1);
       addStateModifier((customEventName, currentState, scope, data) => {
-        switch (scopeName(customEventName, scope)) {
-          case scopeName("CUSTOM_EVENT_NAME", scope):
+        switch (customEventName) {
+          case "CUSTOM_EVENT_NAME":
             return {
               ...currentState,
               kString: data.kString,
@@ -242,8 +233,8 @@ describe("amendState()", () => {
       setState(mockState, "customScope100");
       addStateModifier(mockModifier1);
       addStateModifier((customEventName, currentState, scope, data) => {
-        switch (scopeName(customEventName, scope)) {
-          case scopeName("CUSTOM_EVENT_NAME_100", scope):
+        switch (customEventName) {
+          case "CUSTOM_EVENT_NAME_100":
             return {
               ...currentState,
               kString: data.kString,
@@ -336,7 +327,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
         action,
       });
       expect(getSubscriptions()[0].event).to.be.equal(
-        "GLOBAL_CUSTOM_EVENT_NAME_1"
+        "CUSTOM_EVENT_NAME_1"
       );
     });
     it("should create a subscription with the right event name, when using a custom scope", () => {
@@ -346,7 +337,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
         scope: "scope-1",
       });
       expect(getSubscriptions()[0].event).to.be.equal(
-        "SCOPE-1_CUSTOM_EVENT_NAME_1"
+        "CUSTOM_EVENT_NAME_1"
       );
     });
     it("should create the right quantity of subscriptions when 'event' is a string", () => {
@@ -453,41 +444,41 @@ describe("publish(), subscribe() and unsubscribe()", () => {
         event: "CUSTOM_EVENT_NAME_1",
         action: (customEvent, domEvent) => {
           testVar += 1;
-        },
+        }
       });
       subscribe({
         event: "CUSTOM_EVENT_NAME_1",
         action: (customEvent, domEvent) => {
           testVar += 1;
-        },
-      });
-      subscribe({
-        event: "CUSTOM_EVENT_NAME_1",
-        scope: "scope-1",
-        action: (customEvent, domEvent) => {
-          testVar += 1;
-        },
+        }
       });
       subscribe({
         event: "CUSTOM_EVENT_NAME_1",
         scope: "scope-1",
         action: (customEvent, domEvent) => {
           testVar += 1;
-        },
+        }
+      });
+      subscribe({
+        event: "CUSTOM_EVENT_NAME_1",
+        scope: "scope-1",
+        action: (customEvent, domEvent) => {
+          testVar += 1;
+        }
       });
       subscribe({
         event: "CUSTOM_EVENT_NAME_1",
         scope: "scope-2",
         action: (customEvent, domEvent) => {
           testVar += 1;
-        },
+        }
       });
       subscribe({
         event: "CUSTOM_EVENT_NAME_1",
         scope: "scope-2",
         action: (customEvent, domEvent) => {
           testVar += 1;
-        },
+        }
       });
       publish("CUSTOM_EVENT_NAME_1", {});
       expect(testVar).to.be.equal(2);
@@ -513,7 +504,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
       setState({ foo: "bar", boo: "baz" }, "customScopeName1");
       addStateModifier((customEventName, currentState, scope, data) => {
         switch (customEventName) {
-          case scopeName("CUSTOM_EVENT_NAME_1", scope):
+          case "CUSTOM_EVENT_NAME_1":
             return {
               ...currentState,
               foo: data.foo,
@@ -524,7 +515,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
       }, "global");
       addStateModifier((customEventName, currentState, scope, data) => {
         switch (customEventName) {
-          case scopeName("CUSTOM_EVENT_NAME_1", scope):
+          case "CUSTOM_EVENT_NAME_1":
             return {
               ...currentState,
               boo: data.boo
@@ -568,35 +559,35 @@ describe("publish(), subscribe() and unsubscribe()", () => {
         count: 0,
       };
       subscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: ["CUSTOM_EVENT_NAME_1", "CUSTOM_EVENT_NAME_2"],
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_3",
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName2",
         event: ["CUSTOM_EVENT_NAME_1", "CUSTOM_EVENT_NAME_2"],
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName2",
         event: "CUSTOM_EVENT_NAME_3",
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_1",
         scope: "custom-scope",
         action: (customEvent, domEvent) => {
@@ -650,35 +641,35 @@ describe("publish(), subscribe() and unsubscribe()", () => {
         count: 0,
       };
       subscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: ["CUSTOM_EVENT_NAME_1", "CUSTOM_EVENT_NAME_2"],
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_3",
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName2",
         event: ["CUSTOM_EVENT_NAME_1", "CUSTOM_EVENT_NAME_2"],
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName2",
         event: "CUSTOM_EVENT_NAME_3",
         action: (customEvent, domEvent) => {
           testResults.count += 1;
         },
       });
       subscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_1",
         scope: "custom-scope",
         action: (customEvent, domEvent) => {
@@ -705,21 +696,21 @@ describe("publish(), subscribe() and unsubscribe()", () => {
       expect(testResults.count).to.be.equal(6);
       testResults.count = 0;
       unsubscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_1",
       });
       unsubscribe({
-        name: "subscriptionName2",
-        event: "CUSTOM_EVENT_NAME_1",
-      });
-      unsubscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_2",
       });
+      unsubscribe({
+        group: "subscriptionName1",
+        event: "CUSTOM_EVENT_NAME_3",
+      });
       publish("CUSTOM_EVENT_NAME_1", {});
-      expect(testResults.count).to.be.equal(0);
-      publish("CUSTOM_EVENT_NAME_2", {});
       expect(testResults.count).to.be.equal(1);
+      publish("CUSTOM_EVENT_NAME_2", {});
+      expect(testResults.count).to.be.equal(2);
       publish("CUSTOM_EVENT_NAME_3", {});
       expect(testResults.count).to.be.equal(3);
     });
@@ -727,34 +718,35 @@ describe("publish(), subscribe() and unsubscribe()", () => {
     it("should remove a single subscription from the subscriptions array", () => {
       expect(getSubscriptions()).to.have.lengthOf(7);
       unsubscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_1",
+        scope: "global"
       });
       expect(getSubscriptions()).to.have.lengthOf(6);
       unsubscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName2",
         event: "CUSTOM_EVENT_NAME_1",
       });
       expect(getSubscriptions()).to.have.lengthOf(5);
       unsubscribe({
-        name: "subscriptionName2",
+        group: "subscriptionName2",
         event: "CUSTOM_EVENT_NAME_2",
       });
       expect(getSubscriptions()).to.have.lengthOf(4);
     });
 
-    it("should remove multiple subscriptions from the subscriptions array, by name", () => {
+    it("should remove multiple subscriptions from the subscriptions array, by group", () => {
       expect(getSubscriptions()).to.have.lengthOf(7);
       unsubscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
       });
       expect(getSubscriptions()).to.have.lengthOf(3);
     });
 
-    it("should remove multiple subscriptions from the subscriptions array, by name and scope", () => {
+    it("should remove multiple subscriptions from the subscriptions array, by group and scope", () => {
       expect(getSubscriptions()).to.have.lengthOf(7);
       unsubscribe({
-        name: "subscriptionName1",
+        group: "subscriptionName1",
         scope: "custom-scope",
       });
       expect(getSubscriptions()).to.have.lengthOf(6);
@@ -765,7 +757,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
       unsubscribe({
         event: "CUSTOM_EVENT_NAME_1",
       });
-      expect(getSubscriptions()).to.have.lengthOf(5);
+      expect(getSubscriptions()).to.have.lengthOf(4);
     });
 
     it("should remove multiple subscriptions from the subscriptions array, by event and scope", () => {
@@ -789,13 +781,3 @@ describe("publish(), subscribe() and unsubscribe()", () => {
   });
 });
 
-describe("scopeName()", () => {
-  it("works", () => {
-    expect(scopeName("CUSTOM_EVENT_NAME_1")).to.be.equal(
-      "GLOBAL_CUSTOM_EVENT_NAME_1"
-    );
-    expect(scopeName("CUSTOM_EVENT_NAME_1", "scope-NAME")).to.be.equal(
-      "SCOPE-NAME_CUSTOM_EVENT_NAME_1"
-    );
-  });
-});

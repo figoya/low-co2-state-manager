@@ -16,34 +16,30 @@ addEventListener("DOMContentLoaded", (event) => {
 function subscribe(subscription) {
   try {
     if (type(subscription.event) === "string") {
-      const scopedCustomEventName = scopeName(
+      const handler = createHandler(
         subscription.event,
+        subscription.action,
         subscription.scope
       );
-      const handler = createHandler(scopedCustomEventName, subscription.action, subscription.scope);
-      window.addEventListener(scopedCustomEventName, handler);
+      window.addEventListener(subscription.event, handler);
       addSubscription({
-        name: subscription.name || null,
-        event: scopedCustomEventName,
-        scope: subscription.scope || null,
+        group: subscription.group || null,
+        event: subscription.event,
+        scope: subscription.scope || "global",
         handler,
       });
     } else if (type(subscription.event) === "array") {
       subscription.event.forEach((customEventName) => {
-        const scopedCustomEventName = scopeName(
-          customEventName,
-          subscription.scope
-        );
         const handler = createHandler(
-          scopedCustomEventName,
+          customEventName,
           subscription.action,
           subscription.scope
         );
-        window.addEventListener(scopedCustomEventName, handler);
+        window.addEventListener(customEventName, handler);
         addSubscription({
-          name: subscription.name || null,
-          event: scopedCustomEventName,
-          scope: subscription.scope || null,
+          group: subscription.group || null,
+          event: customEventName,
+          scope: subscription.scope || "global",
           handler,
         });
       });
@@ -55,31 +51,22 @@ function subscribe(subscription) {
   }
 }
 
-function unsubscribe(unsubscription = {}) {
-  const subs = getSubscriptions();
-  const subsToKeep = [];
-  if (unsubscription.event) {
-    unsubscription.scopedEvent = scopeName(unsubscription.event, unsubscription.scope);
-  }
-  subs.forEach((sub) => {
-    let remove = false;
-    if (!unsubscription || (!unsubscription.event && !unsubscription.name)) {
-      remove = true;
-    } else if (unsubscription.event && !unsubscription.name) {
-      remove = sub.event === unsubscription.scopedEvent;
-    } else if (!unsubscription.event && unsubscription.name && !unsubscription.scope) {
-      remove = sub.name === unsubscription.name;
-    } else if (!unsubscription.event && unsubscription.name && unsubscription.scope) {
-      remove = sub.name === unsubscription.name && sub.scope === unsubscription.scope;
-    } else {
-      remove =
-        sub.event === unsubscription.scopedEvent && sub.name === unsubscription.name;
+function unsubscribe(unsubscription) {   
+  const subs = [...getSubscriptions()];
+  const subsToKeep = subs.filter((sub) => {
+    if(unsubscription) {
+      if(unsubscription.event && sub.event !== unsubscription.event){
+        return true;
+      }
+      if(unsubscription.scope && sub.scope !== unsubscription.scope){
+        return true;
+      }
+      if(unsubscription.group && sub.group !== unsubscription.group){
+        return true;
+      }
     }
-    if (remove) {
-      window.removeEventListener(sub.event, sub.handler);
-    } else {
-      subsToKeep.push(sub);
-    }
+    window.removeEventListener(sub.event, sub.handler);
+    return false;
   });
   setSubscriptions(subsToKeep);
 }
@@ -117,16 +104,18 @@ function addSubscription(newSub) {
   setSubscriptions(newSubs);
 }
 
-function createHandler(name, action, scope = "global") {
+function createHandler(customEventName, action, scope = "global") {
   return (event) => {
-    amendState(name, event.detail?.data || null, scope);
-    action(event, event.detail.domEvent);
+    if(event.detail.scope === scope){
+      amendState(customEventName, event.detail?.data || null, scope);
+      action(event, event.detail.domEvent);
+    }
   };
 }
 
 function publish(customEventName, domEvent, scope = "global", data = null) {
   dispatchEvent(
-    new CustomEvent(scopeName(customEventName, scope), {
+    new CustomEvent(customEventName, {
       detail: { domEvent, scope, data },
     })
   );
@@ -158,7 +147,8 @@ function getAllState() {
       window.sessionStorage.state must be valid JSON.
       ${error}
     `);
-  }}
+  }
+}
 
 function setState(value, scope = "global") {
   const newState = {
@@ -176,7 +166,7 @@ function amendState(customEventName, data = null, scope = "global") {
   const currentState = getState(scope);
   let newState = currentState;
   getStateModifiers().forEach((modifier) => {
-    if(scope === modifier.scope){
+    if (scope === modifier.scope) {
       newState = modifier.xxx(customEventName, newState, scope, data);
     }
   });
@@ -193,26 +183,13 @@ function setStateModifiers(value) {
 
 function addStateModifier(newModifier, scope = "global") {
   let modifiers = [...getStateModifiers()];
-  modifiers.push(
-    { 
-      xxx: newModifier,
-      scope 
-    }
-  );
+  modifiers.push({
+    xxx: newModifier,
+    scope,
+  });
   setStateModifiers(modifiers);
 }
 
-function scopeName(customEventName, scope = "global") {
-  try {
-    if (type(scope) === "string") {
-      return scope.toUpperCase() + "_" + customEventName;
-    } else {
-      throw "Scope must be a string";
-    }
-  } catch (error) {
-    console.error(error);
-  }
-}
 
 function type(value) {
   var regex = /^\[object\s(\S+?)\]$/;
@@ -233,5 +210,4 @@ export {
   getStateModifiers,
   setStateModifiers,
   resetAllState,
-  scopeName
 };
