@@ -1,6 +1,6 @@
 {
   "name": "low-carbon-state-manager",
-  "version": "0.4.3",
+  "version": "0.5.0",
   "description": "A low-carbon, event-driven, state-manager for front-end applications that use web components",
   "main": "dist/index.js",
   "private": false,
