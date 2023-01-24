@@ -113,7 +113,8 @@ function createHandler(customEventName, action, scope = "global") {
   };
 }
 
-function publish(customEventName, domEvent, scope = "global", data = null) {
+function publish(publication) {
+  const { event: customEventName, domEvent, scope = "global", data = null } = publication;
   dispatchEvent(
     new CustomEvent(customEventName, {
       detail: { domEvent, scope, data },
@@ -167,7 +168,7 @@ function amendState(customEventName, data = null, scope = "global") {
   let newState = currentState;
   getStateModifiers().forEach((modifier) => {
     if (scope === modifier.scope) {
-      newState = modifier.xxx(customEventName, newState, scope, data);
+      newState = modifier.mod(customEventName, newState, data);
     }
   });
   setState(newState, scope);
@@ -181,15 +182,14 @@ function setStateModifiers(value) {
   stateModifiers = value;
 }
 
-function addStateModifier(newModifier, scope = "global") {
+function addStateModifier(mod, scope = "global") {
   let modifiers = [...getStateModifiers()];
   modifiers.push({
-    xxx: newModifier,
+    mod,
     scope,
   });
   setStateModifiers(modifiers);
 }
-
 
 function type(value) {
   var regex = /^\[object\s(\S+?)\]$/;

@@ -35,7 +35,7 @@ const mockState = {
   kSymbol: Symbol(),
 };
 
-const mockModifier1 = (customEventName, currentState, scope, data) => {
+const mockModifier1 = (customEventName, currentState, data) => {
   switch (customEventName) {
     case "CUSTOM_EVENT_NAME":
       return {
@@ -59,7 +59,7 @@ const mockModifier1 = (customEventName, currentState, scope, data) => {
   }
 };
 
-const mockModifier2 = (customEventName, currentState, scope, data) => {
+const mockModifier2 = (customEventName, currentState, data) => {
   switch (customEventName) {
     case "CUSTOM_EVENT_NAME":
       return {
@@ -167,7 +167,7 @@ describe("amendState()", () => {
     it("should work when using custom scope", () => {
       setState(mockState, "customScope1");
       addStateModifier(mockModifier1);
-      addStateModifier((customEventName, currentState, scope, data) => {
+      addStateModifier((customEventName, currentState, data) => {
         switch (customEventName) {
           case "CUSTOM_EVENT_NAME":
             return {
@@ -232,7 +232,7 @@ describe("amendState()", () => {
       setState(mockState);
       setState(mockState, "customScope100");
       addStateModifier(mockModifier1);
-      addStateModifier((customEventName, currentState, scope, data) => {
+      addStateModifier((customEventName, currentState, data) => {
         switch (customEventName) {
           case "CUSTOM_EVENT_NAME_100":
             return {
@@ -394,7 +394,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
           testVar = testVar + 1;
         },
       });
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testVar).to.be.equal(1);
     });
     it("should cause subscribe.action to be called twice when publish() is called twice", () => {
@@ -405,9 +405,9 @@ describe("publish(), subscribe() and unsubscribe()", () => {
           testVar = testVar + 1;
         },
       });
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testVar).to.be.equal(1);
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testVar).to.be.equal(2);
     });
     it("should cause subscribe.action to be called once per subscribe()", () => {
@@ -424,7 +424,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
           testVar = testVar + 1;
         },
       });
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testVar).to.be.equal(2);
     });
     it("should NOT cause subscribe.action to be called when the custom event name does not match", () => {
@@ -435,7 +435,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
           testVar = 1;
         },
       });
-      publish("CUSTOM_EVENT_NAME_2", {});
+      publish({ event: "CUSTOM_EVENT_NAME_2" });
       expect(testVar).to.be.equal(0);
     });
     it("should NOT trigger actions in wrong scope", () => {
@@ -480,11 +480,11 @@ describe("publish(), subscribe() and unsubscribe()", () => {
           testVar += 1;
         }
       });
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testVar).to.be.equal(2);
-      publish("CUSTOM_EVENT_NAME_1", {}, "scope-1");
+      publish({ event: "CUSTOM_EVENT_NAME_1", scope: "scope-1" });
       expect(testVar).to.be.equal(4);
-      publish("CUSTOM_EVENT_NAME_1", {}, "scope-2");
+      publish({ event: "CUSTOM_EVENT_NAME_1", scope: "scope-2" });
       expect(testVar).to.be.equal(6);
     });
   });
@@ -502,7 +502,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
       let testVar = 0;
       setState({ foo: "bar" });
       setState({ foo: "bar", boo: "baz" }, "customScopeName1");
-      addStateModifier((customEventName, currentState, scope, data) => {
+      addStateModifier((customEventName, currentState, data) => {
         switch (customEventName) {
           case "CUSTOM_EVENT_NAME_1":
             return {
@@ -513,7 +513,7 @@ describe("publish(), subscribe() and unsubscribe()", () => {
             return currentState;
         }
       }, "global");
-      addStateModifier((customEventName, currentState, scope, data) => {
+      addStateModifier((customEventName, currentState, data) => {
         switch (customEventName) {
           case "CUSTOM_EVENT_NAME_1":
             return {
@@ -537,9 +537,9 @@ describe("publish(), subscribe() and unsubscribe()", () => {
           testVar += 1;
         }
       });
-      publish("CUSTOM_EVENT_NAME_2", {}, "global", { foo: "bar1" });
-      publish("CUSTOM_EVENT_NAME_1", {}, "global", { foo: "bar1" });
-      publish("CUSTOM_EVENT_NAME_1", {}, "customScopeName1", { boo: "baz1" });
+      publish({ event: "CUSTOM_EVENT_NAME_2", data: { foo: "bar1" } });
+      publish({ event: "CUSTOM_EVENT_NAME_1", data: { foo: "bar1" } });
+      publish({ event: "CUSTOM_EVENT_NAME_1", data: { boo: "baz1" }, scope: "customScopeName1" });
       expect(testVar).to.be.equal(3);
       expect(getState().foo).to.be.equal("bar1");
       expect(getState("customScopeName1").foo).to.be.equal("bar");
@@ -605,26 +605,26 @@ describe("publish(), subscribe() and unsubscribe()", () => {
     });
     it("should remove all subscriptions and no actions should be called", () => {
       expect(getSubscriptions()).to.have.lengthOf(7);
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testResults.count).to.be.equal(2);
-      publish("CUSTOM_EVENT_NAME_2", {});
+      publish({ event: "CUSTOM_EVENT_NAME_2" });
       expect(testResults.count).to.be.equal(4);
-      publish("CUSTOM_EVENT_NAME_3", {});
+      publish({ event: "CUSTOM_EVENT_NAME_3" });
       expect(testResults.count).to.be.equal(6);
-      publish("CUSTOM_EVENT_NAME_3", {}, "custom-scope");
+      publish({ event: "CUSTOM_EVENT_NAME_3", scope: "custom-scope" });
       expect(testResults.count).to.be.equal(6);
-      publish("CUSTOM_EVENT_NAME_1", {}, "custom-scope");
+      publish({ event: "CUSTOM_EVENT_NAME_1", scope: "custom-scope" });
       expect(testResults.count).to.be.equal(7);
       unsubscribe();
       expect(getSubscriptions()).to.have.lengthOf(0);
       testResults.count = 0;
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testResults.count).to.be.equal(0);
-      publish("CUSTOM_EVENT_NAME_2", {});
+      publish({ event: "CUSTOM_EVENT_NAME_2" });
       expect(testResults.count).to.be.equal(0);
-      publish("CUSTOM_EVENT_NAME_3", {});
+      publish({ event: "CUSTOM_EVENT_NAME_3" });
       expect(testResults.count).to.be.equal(0);
-      publish("CUSTOM_EVENT_NAME_1", {}, "custom-scope");
+      publish({ event: "CUSTOM_EVENT_NAME_1", scope: "custom-scope" });
       expect(testResults.count).to.be.equal(0);
     });
   });
@@ -688,11 +688,11 @@ describe("publish(), subscribe() and unsubscribe()", () => {
     });
 
     it("should cause a subscription's action not to be called", () => {
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testResults.count).to.be.equal(2);
-      publish("CUSTOM_EVENT_NAME_2", {});
+      publish({ event: "CUSTOM_EVENT_NAME_2" });
       expect(testResults.count).to.be.equal(4);
-      publish("CUSTOM_EVENT_NAME_3", {});
+      publish({ event: "CUSTOM_EVENT_NAME_3" });
       expect(testResults.count).to.be.equal(6);
       testResults.count = 0;
       unsubscribe({
@@ -707,11 +707,11 @@ describe("publish(), subscribe() and unsubscribe()", () => {
         group: "subscriptionName1",
         event: "CUSTOM_EVENT_NAME_3",
       });
-      publish("CUSTOM_EVENT_NAME_1", {});
+      publish({ event: "CUSTOM_EVENT_NAME_1" });
       expect(testResults.count).to.be.equal(1);
-      publish("CUSTOM_EVENT_NAME_2", {});
+      publish({ event: "CUSTOM_EVENT_NAME_2" });
       expect(testResults.count).to.be.equal(2);
-      publish("CUSTOM_EVENT_NAME_3", {});
+      publish({ event: "CUSTOM_EVENT_NAME_3" });
       expect(testResults.count).to.be.equal(3);
     });
 
