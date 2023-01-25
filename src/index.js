@@ -9,8 +9,11 @@ const handler = createHandler(
 );
 window.addEventListener("GLOBAL_DOM_CONTENT_LOADED", handler);
 
-addEventListener("DOMContentLoaded", (event) => {
-  publish("DOM_CONTENT_LOADED", event);
+addEventListener("DOMContentLoaded", (domEvent) => {
+  publish({
+      event: "DOM_CONTENT_LOADED", 
+      domEvent
+    });
 });
 
 function subscribe(subscription) {
