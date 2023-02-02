@@ -109,10 +109,12 @@ https://github.com/figoya/low-carbon-state-manager-demo
 
 Assuming you have node and npm installed you can:
 
+```
 $ git clone https://github.com/figoya/low-carbon-state-manager-demo
 $ cd low-carbon-state-manager-demo
 $ npm install
 $ npm start
+```
 
 
 ## Events
