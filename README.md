@@ -101,16 +101,57 @@ This is a way of proving that an asset on the web has not been changed since its
 
 # How to use Low Carbon State Manager
 
-Low Carbon State Manager works with events and a publish/subscribe pattern.
+Low Carbon State Manager works with events, a publish/subscribe pattern and state modifiers
 
-1. Subscribe to an event. The subscription has an 'action' which is a function which will be called when the event is published.
-2. Publish an event
-3. Optionally, add a state modifier. A state modifier will change the app state when the event is published and before the subscriber action is called. 
+The best way to understand how it works is by looking at the examples in the campanion demo app:
 
-Data can be passed from the publisher to the state modifier and the subscriber-action has access to the state.
+https://github.com/figoya/low-carbon-state-manager-demo
 
-So, for example, you could
+Assuming you have node and npm installed you can:
 
-1. Subscribe to an event called 'SHOE_DATA_FETCHED'. Add an action that uses shoe data from state and creates some html based on it
-2. Fetch some shoe data from an API. When it is complete, Publish the event 'SHOE_DATA_FETCHED' along with the shoe data
-3. Create a state-modifier that will add the shoe data to the state whenever 'SHOE_DATA_FETCHED'
+$ git clone https://github.com/figoya/low-carbon-state-manager-demo
+$ cd low-carbon-state-manager-demo
+$ npm install
+$ npm start
+
+
+## Events
+
+These are custom events that you create to indicate that something has happened
+
+## Publish/Subscribe
+
+You can publish events and subscribe to them. 
+
+## Publish
+
+You can publish events and optionally pass data to the state modifier. For example, you might fetch some product data, publish a "FETCH_PRODUCT_DATA_SUCCEEDED" event and add the fetch data.
+
+## State modifiers
+
+A state modifier listens for published events, and changes the state. This happens after publish and before any subscriptions are notified. 
+
+State modifiers are optional. You can publish and subscribe to events without changing state at all.
+
+In our example above, there may be a State Modiefier that listens for "FETCH_PRODUCT_DATA_SUCCEEDED" and adds the product data to state in whatever way is desired.
+
+## Subscriptions
+
+Subscriptions are actions that happen after an event is published, and after the state has been (optionally) changed by the state modifier. Like state modifiers, they 'listen' for events and do something when they happen.
+
+In our example above, there may be one or more subscriptions to "FETCH_PRODUCT_DATA_SUCCEEDED" that take the product data stored in state, and add it to the DOM
+
+## Scope
+
+Scope is just a way of dividing things up into logically separate areas of work in the app. For example, if you think it's helpful to have all the events and state for the main menu scoped to "main-menu" you can do this. Other parts of the app can still publish or subscribe this scoped area. Scopes don't restrict what you can do or access, they just help to organise your app.
+
+## Persistace 
+
+State persists between page loads. You can make use of this by using the built in "DOM_CONTENT_LOADED" event which happens at "safe" time once all JS and loaded and the DOM is available.
+
+For example, if you wanted the product data (in above examples) to be used in subsequent pages, you would create a subscription to "DOM_CONTENT_LOADED" that used the data already stored in the state to add the products to the DOM.
+
+## Demo app
+
+It's best to look at the examples in the demo app to see how to implement these concepts
+
