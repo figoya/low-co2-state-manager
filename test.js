@@ -9,6 +9,7 @@ import {
   setState,
   amendState,
   addStateModifier,
+  setDefaultState,
   getStateModifiers,
   setStateModifiers,
   resetAllState,
@@ -308,6 +309,23 @@ describe("addStateModifier()", () => {
     expect(getStateModifiers()).to.have.lengthOf(2);
   });
 });
+
+describe("setDefaultState()", () => {
+  it("should set state if none exists", () => {
+    setDefaultState({ foo: 'bar'}, "customScope-1");
+    expect(getState("customScope-1").foo).to.be.equal('bar');
+  });
+  it("should NOT set state if it already exists", () => {
+    resetAllState();
+    setState({ foo: "baz"}, "customScope-1")
+    setDefaultState({ foo: 'bar'}, "customScope-1");
+    expect(getState("customScope-1").foo).to.be.equal('baz');
+  });
+  it("", () => {
+    
+
+  })
+})
 
 describe("publish(), subscribe() and unsubscribe()", () => {
   const action = (customEvent, domEvent) => {};

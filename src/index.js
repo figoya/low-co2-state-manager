@@ -7,7 +7,7 @@ const handler = createHandler(
     console.info(customEvent, domEvent);
   }
 );
-window.addEventListener("GLOBAL_DOM_CONTENT_LOADED", handler);
+window.addEventListener("DOM_CONTENT_LOADED", handler);
 
 addEventListener("DOMContentLoaded", (domEvent) => {
   publish({
@@ -162,12 +162,18 @@ function setState(value, scope = "global") {
   window.sessionStorage.setItem("lcsm", JSON.stringify(newState));
 }
 
+function setDefaultState(state, scope = "global") {
+  if(getState(scope) === undefined){
+    setState(state, scope);
+  }
+}
+
 function resetAllState() {
   window.sessionStorage.setItem("lcsm", JSON.stringify({}));
 }
 
 function amendState(customEventName, data = null, scope = "global") {
-  const currentState = getState(scope);
+  const currentState = getState(scope) || {};
   let newState = currentState;
   getStateModifiers().forEach((modifier) => {
     if (scope === modifier.scope) {
@@ -208,6 +214,7 @@ export {
   setSubscriptions,
   getState,
   setState,
+  setDefaultState,
   amendState,
   addStateModifier,
   getStateModifiers,
