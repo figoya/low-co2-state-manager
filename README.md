@@ -1,13 +1,13 @@
-# Low Carbon State Manager
-A low-carbon, event-driven, state-manager for front-end web applications and websites that use web components
+# Low CO2 State Manager
+A low-CO2, event-driven, state-manager for front-end web applications and websites that use web components
 
 ## Why and when should you use it?
 
 If you want a light-weight front end that can handle complex user interactions and their results in a graceful and intuitive way.
 
-## Why is it low carbon?
+## Why is it low CO2?
 
-The internet demands a lot of electricity. The transfer of data is a big part of this. Low Carbon State Manager is just 3K in size and can enable you to have a sophisticated front end without using a "single page application" which typically involves the transfer of a gratuitously-large amount of code for every user.
+The internet demands a lot of electricity. The transfer of data is a big part of this. Low CO2 State Manager is just 3K in size and can enable you to have a sophisticated front end without using a "single page application" which typically involves the transfer of a gratuitously-large amount of code for every user.
 
 ## Background
 
@@ -19,13 +19,13 @@ One downside of the single page application is that the amount of code served ca
 
 ## Web components
 
-The emergence of Web Components, which run natively in web browsers, solve some of the problems of building a complex front end but they lack the ability to manage complex state. Low Carbon State Manager fills this gap. It is tiny in size at just 3-4K works natively in browsers, and is easy to install and use. Low Carbon State Manage can work without Web Components but they are natural partners.
+The emergence of Web Components, which run natively in web browsers, solve some of the problems of building a complex front end but they lack the ability to manage complex state. Low CO2 State Manager fills this gap. It is tiny in size at just 3-4K works natively in browsers, and is easy to install and use. Low CO2 State Manage can work without Web Components but they are natural partners.
 
 # Install
 
-Note: Low Carbon State Manager is designed to be used in the browser, without a JavaScript bundler. Nor should it be used as part of an SPA framework.
+Note: Low CO2 State Manager is designed to be used in the browser, without a JavaScript bundler. Nor should it be used as part of an SPA framework.
 
-There are a few approaches to installing and using Low Carbon State Manager. Over time, as browsers improve and browser market share changes, this may change.
+There are a few approaches to installing and using Low CO2 State Manager. Over time, as browsers improve and browser market share changes, this may change.
 
 As of 01/23 the options below cover the avilable options and their current limitations to the best of my knowledge.
 
@@ -35,14 +35,14 @@ It is an ES Module and, as such, can only easily be used inside another module u
 
 Currently the best way is to use npm to install the package and then, to then use the full path and file name in the import.
 
-1. ```npm install low-carbon-state-manager```
+1. ```npm install low-co2-state-manager```
 2. In the ```<head></head>``` of each page add the module in which you wish to use it ```<script defer src="/js/my-script.js" type="module"></script>```
-3. Inside ```"/js/my-script.js"``` add ```import { package-name } from '/node_modules/low-carbon-state-manager/dist/index.min.js';```
+3. Inside ```"/js/my-script.js"``` add ```import { package-name } from '/node_modules/low-co2-state-manager/dist/index.min.js';```
 
 ## Alternative approaches
 
 ### Using an Import Map
-1. `npm install low-carbon-state-manager`
+1. `npm install low-co2-state-manager`
 2. In the `<head></head>` of each page add the module in which you wish to use it 
 
 ```
@@ -51,16 +51,16 @@ Currently the best way is to use npm to install the package and then, to then us
 <script type="importmap">
   {
     "imports": {
-      "low-carbon-state-manager": "/node_modules/low-carbon-state-manager/dist/index.min.js"
+      "low-co2-state-manager": "/node_modules/low-co2-state-manager/dist/index.min.js"
     }
   }
 </script>
 ```
 3. Inside `"/js/my-script.js"` add 
 ```
-import { package-name } from 'low-carbon-state-manager';
+import { package-name } from 'low-co2-state-manager';
 ```
-Warning: Import Maps are a nice way to make your import addresses more tidy and managable but there isn't good browser support yet, which means that the 35K `es-module-shims` is required. This shim is around 35K, not a huge size but 10 times larger than low-carbon-state-manager, making it less low carbon. 
+Warning: Import Maps are a nice way to make your import addresses more tidy and managable but there isn't good browser support yet, which means that the 35K `es-module-shims` is required. This shim is around 35K, not a huge size but 10 times larger than low-co2-state-manager, making it higher in CO2 emissions. 
 
 ### Using an Import Map with a CDN
 
@@ -70,14 +70,14 @@ Warning: Import Maps are a nice way to make your import addresses more tidy and 
 <script type="importmap">
   {
     "imports": {
-      "low-carbon-state-manager": "https://cdn.jsdelivr.net/npm/low-carbon-state-manager@0.3.1/dist/index.min.js"
+      "low-co2-state-manager": "https://cdn.jsdelivr.net/npm/low-co2-state-manager@0.3.1/dist/index.min.js"
     }
   }
 </script>
 ```
 2. Inside `"/js/my-script.js"` add 
 ```
-import { package-name } from 'low-carbon-state-manager';
+import { package-name } from 'low-co2-state-manager';
 ```
 
 Warning: This is convenient but 3rd party scripts fetched from a CDN SHOULD include an way of proving the integrity of the asset. As far as I know, there is currently no way to do this with an import map. See below for more info on "Subresource Integrity"
@@ -87,7 +87,7 @@ Warning: This is convenient but 3rd party scripts fetched from a CDN SHOULD incl
 1. In the `<head></head>` of each page add the module in which you wish to use it 
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/low-carbon-state-manager@0.3.1/dist/index.min.js" integrity="sha384-AXyWif9/WHQJE/h5oE5/03WfSfbnFx2xbS6h7a2R05KjdCFw/fnnSLrTCpNPJIby" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/low-co2-state-manager@0.3.1/dist/index.min.js" integrity="sha384-AXyWif9/WHQJE/h5oE5/03WfSfbnFx2xbS6h7a2R05KjdCFw/fnnSLrTCpNPJIby" crossorigin="anonymous"></script>
 ```
 2. Make all the named exports of the module accessible globally accessible by making them properties of the window object.
 
@@ -99,19 +99,19 @@ No `import` needed because this effectively makes this module a non-module
 
 This is a way of proving that an asset on the web has not been changed since its publication, thus preventing malicious alterations of an asset on a compramised source URL. This can be done easiy by adding the integrity and crossorignin attributes to a script element. Read more here: "https://www.srihash.org/. In short, the process involves creating a hash of your resource using openssl and adding that to the script element's integrity attribute. Together with HTTPS and its use of public key infrastructure, this guarantees 3rd party assets are authentic.
 
-# How to use Low Carbon State Manager
+# How to use Low CO2 State Manager
 
-Low Carbon State Manager works with events, a publish/subscribe pattern and state modifiers
+Low CO2 State Manager works with events, a publish/subscribe pattern and state modifiers
 
 The best way to understand how it works is by looking at the examples in the campanion demo app:
 
-https://github.com/figoya/low-carbon-state-manager-demo
+https://github.com/figoya/low-co2-state-manager-demo
 
 Assuming you have node and npm installed you can:
 
 ```
-$ git clone https://github.com/figoya/low-carbon-state-manager-demo
-$ cd low-carbon-state-manager-demo
+$ git clone https://github.com/figoya/low-co2-state-manager-demo
+$ cd low-co2-state-manager-demo
 $ npm install
 $ npm start
 ```
